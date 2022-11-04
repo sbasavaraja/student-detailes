@@ -1,0 +1,275 @@
+package edu.jsp.studentapp.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+import edu.jsp.studentapp.dto.Student;
+
+public class StudentDetailes
+{
+	String driverclass = "com.mysql.jdbc.Driver";
+	String dburl = "jdbc:mysql://localhost:3306/hejm29_db?user=root&password=root";
+	private Student s;
+	public boolean insertStudent(Student newStudent)
+	{
+		Connection con =null;
+		PreparedStatement prpst =null;
+		try {
+			Class.forName(driverclass);
+			con = DriverManager.getConnection(dburl);
+			
+			String queary = "insert into student_table values(?,?,?,?)";
+			prpst =con.prepareStatement(queary);
+			prpst.setInt(1,newStudent.getId());
+			prpst.setString(2, newStudent.getFirstname());
+			prpst.setString(3,newStudent.getLastname());
+			prpst.setDouble(4, newStudent.getMarks());
+			
+			int roweffected = prpst.executeUpdate();
+			return roweffected !=0;
+			
+		} catch (ClassNotFoundException e) {
+			
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally {
+			if(con !=null)
+			{
+				try {
+					con.close();
+				}
+				catch (SQLException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			if (prpst != null)
+			{
+				try {
+					prpst.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return false;
+	}
+	public Student searchStudent(int id)
+	{
+		Connection con =null;
+		PreparedStatement prstmt = null;
+		ResultSet rs =null;
+		try {
+			Class.forName(driverclass);
+			con = DriverManager.getConnection(dburl);
+			String query = "SELECT * FROM student_table WHERE id = ?";
+			prstmt = con.prepareStatement(query);
+			prstmt.setInt(1, id);
+			rs = prstmt.executeQuery();
+			if(rs.next())
+			{
+				int id1 = rs.getInt(1);
+				String fname=rs.getString(2);
+				String lname = rs.getString(3);
+				double mrks=rs.getDouble(4);
+				
+				Student s1 = new Student();
+				s1.setId(id1);
+				s1.setLastname(lname);
+				s1.setFirstname(fname);
+				s1.setMarks(mrks);
+				
+				return s;
+			}
+			else
+			{
+				System.out.println("data not present");
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally {
+			if(con !=null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if(prstmt !=null)
+			{
+				try {
+					prstmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if(rs !=null)
+			{
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return s;
+	}
+	
+	public boolean updateStudentMarks(int id,double marks)
+	{
+		//logic to Update Data
+		//
+		Connection con = null;
+		PreparedStatement prst =null;
+		try {
+			Class.forName(driverclass);
+			con = DriverManager.getConnection(dburl);
+			
+			String query = "UPDATE student_table set marks = ? WHERE id = ?";
+			prst = con.prepareStatement(query);
+			prst.setDouble(1,marks);
+			prst.setInt(2, id);
+			int rs = prst.executeUpdate();
+			
+			if(rs !=0) {
+				return true;
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		finally {
+			if(con!=null)
+			{
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if(prst !=null) {
+				try {
+					prst.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean deleteStudent(int id)
+	{
+		Connection con = null;
+		PreparedStatement prst =null;
+		try {
+			Class.forName(driverclass);
+			con = DriverManager.getConnection(dburl);
+			String query = "DELETE FROM student_table WHERE id = ?";
+			prst = con.prepareStatement(query);
+			prst.setInt(1, id);
+			
+			int rs = prst.executeUpdate();
+			if(rs !=0)
+			{
+				return true;
+			}
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally {
+			if(con !=null)
+			{
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if(prst !=null)
+			{
+				try {
+					prst.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	public void getAllStudents()
+	{
+		//logic to get all Data
+		Connection con = null;
+		Statement stmt =null;
+		ResultSet rst = null;
+		try {
+			Class.forName(driverclass);
+			con = DriverManager.getConnection(dburl);
+			String query = "SELECT * FROM student_table";
+			stmt = con.createStatement();
+			rst = stmt.executeQuery(query);
+			
+			while(rst.next()) 
+			{
+				int id =rst.getInt(1);
+				String lname = rst.getString(2);
+				String fname = rst.getString(3);
+				double marks = rst.getDouble(4);
+				System.out.println(id+"\t\t"+lname+"\t\t"+fname+"\t\t"+marks);
+				
+				Student s = new Student();
+				s.setId(id);
+				s.setLastname(lname);
+				s.setFirstname(fname);
+				s.setMarks(marks);
+				
+				
+			}
+			
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		finally {
+			if(con !=null)
+			{
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if(stmt!=null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if(rst !=null) {
+				try {
+					rst.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return ;
+	}
+}

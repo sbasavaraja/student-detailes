@@ -1,0 +1,110 @@
+package edu.jsp.student.utl;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Scanner;
+
+import javax.management.OperationsException;
+import javax.xml.parsers.DocumentBuilder;
+
+import edu.jsp.studentapp.dao.StudentDetailes;
+import edu.jsp.studentapp.dto.Student;
+
+public class Mainapp 
+{
+	public static void main(String[] args)
+	{
+		System.out.println("welcome to student application");
+		Scanner sc = new Scanner(System.in);
+		StudentDetailes st = new StudentDetailes();
+		while(true)
+		{
+			System.out.println("------------------------------------------------------------");
+			System.out.println("1.insert student\n2.search student\n3.update student marks\n4.delet student\n5.getall student\n6.exit");
+			System.out.println("--------------------------------------------------------------");
+			
+			System.out.println("enter the choice");
+			int choice = sc.nextInt();
+			switch(choice)
+			{
+				case 1:
+					System.out.println("enter the student id");
+					int id = sc.nextInt();
+					System.out.println("enter the student lname");
+					String lname = sc.next();
+					System.out.println("enter the student fname");
+					String fname = sc.next();
+					System.out.println("enter the student marks");
+					double marks = sc.nextDouble();
+					
+					Student s = new Student();
+					s.setId(id);
+					s.setLastname(lname);
+					s.setFirstname(fname);
+					s.setMarks(marks);
+					
+					boolean isinserted = st.insertStudent(s);
+					if(isinserted)
+					{
+						System.out.println("student data inserted");
+					}
+					else {
+						System.out.println("student data not inserted");
+					}
+					break;
+					
+				case 2:
+					System.out.println("enter the student id ");
+					int id1 = sc.nextInt();
+					Student s1 = st.searchStudent(id1);
+					//s1.setId(id1);
+
+					if(s1!=null)
+					{
+						System.out.println(s1);
+					}
+					else
+					{
+						System.out.println("student data not present="+s1);
+					}
+					break;
+				case 3:
+					System.out.println("enter the marks");
+					double marks1 = sc.nextDouble();
+					System.out.println("enter the id");
+					int id2 = sc.nextInt();
+					boolean s2 = st.updateStudentMarks(id2, marks1);
+					
+					
+					if(s2)
+					{
+						System.out.println("marks is updated");
+					}
+					else
+					{
+						System.out.println("marks is not updated");
+					}
+					break;
+				case 4:
+					System.out.println("enter the student id");
+					int id3 = sc.nextInt();
+					
+					boolean  b = st.deleteStudent(id3);
+					if(b) {
+						System.out.println("row is deleted");
+					}
+					else						
+					{
+						System.out.println("row is not deleted");
+					}
+					break;
+				case 5:st.getAllStudents();
+					
+					
+					break;
+				case 6:System.exit(0);
+					break;
+			}
+		}
+	}
+}
